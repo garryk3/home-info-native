@@ -1,22 +1,31 @@
-import React, { Fragment } from 'react';
-import { StyleSheet, Text, View, StatusBar, ToolbarAndroid } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, ScrollView, StatusBar, ToolbarAndroid, Button, Alert } from 'react-native';
 
 export default class App extends React.Component {
   render() {
     return (
-        <Fragment>
-          <StatusBar
-              backgroundColor="blue"
-              barStyle="light-content"
-              currentHeight={500}
-          />
-          <ToolbarAndroid
-              logo={require('./assets/icon.png')}
-              title="AwesomeApp"
-              actions={[{title: 'Settings', icon: require('./assets/icon.png'), show: 'always'}]}
-              onActionSelected={this.onActionSelected} />
-          <Text>Open up App.js to start working on your app!</Text>
-        </Fragment>
+        <ScrollView>
+            {[1,2,3,4,5,6].map(() => {
+                return <Text>Open up App.js to start working on your app!</Text>
+            })}
+            <StatusBar
+                backgroundColor="blue"
+                barStyle="light-content"
+                currentHeight={500}
+            />
+            <ToolbarAndroid
+                logo={require('./assets/icon.png')}
+                title="AwesomeApp"
+                actions={[{title: 'Settings', icon: require('./assets/icon.png'), show: 'always'}]}
+                onActionSelected={this.onActionSelected}
+            />
+            <Button
+                onPress={() => {
+                    Alert.alert('You tapped the button!');
+                }}
+                title="Press Me"
+            />
+        </ScrollView>
     );
   }
 }
