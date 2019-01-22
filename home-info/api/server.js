@@ -1,9 +1,9 @@
 import express from 'express';
 import bodyParser  from 'body-parser';
-import config from './config';
+import config from './config/config';
 import cors from 'cors';
 import morgan from 'morgan';
-import routes from './';
+import routes from './router';
 
 const app = express();
 

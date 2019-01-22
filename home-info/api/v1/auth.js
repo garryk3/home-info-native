@@ -1,22 +1,27 @@
 import express from 'express';
-import axios from '../axios-server';
+import axios from '../config/axios-server';
 
 const router = express.Router();
 
-export default () => {
-	const admin = {
-		user: 'test',
-		password: 'test'
-	};
+const admin = {
+	user: 'test',
+	password: 'test'
+};
 
+export default () => {
 	router.route('/')
 		.post((req, res) => {
-			const params = {
-				type: 'command',
-				param: 'getauth'
+			const testRequestData = {
+				name: 'test',
+				password: 'test'
 			};
 
-			if(req.query) {
+			if(testRequestData.name === admin.name && testRequestData.password === admin.password) {
+				const params = {
+					type: 'command',
+					param: 'getauth'
+				};
+
 				axios.get('/json.htm', { params })
 					.then((response) => {
 						const info = response.data;
@@ -29,7 +34,7 @@ export default () => {
 								})
 							} else {
 								res.send({
-									code: 500,
+									code: 401,
 									message: `Авторизация не удалась, недостаточно прав (${info.rights}-${info.status}-${info.statusText}) `
 								})
 							}
@@ -47,6 +52,11 @@ export default () => {
 						});
 						console.error(error);
 					})
+			} else {
+				res.send({
+					code: 401,
+					message: `Авторизация не удалась, некорректные данные пользователя`
+				})
 			}
 		});
 

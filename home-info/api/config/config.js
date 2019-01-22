@@ -3,7 +3,7 @@ export default {
 	host: 'localhost',
 	port: '9000',
 	timeouts: {
-		server: 2000
+		server: 5000
 	},
 	siteUrl: '*'
 	//siteUrl: 'http://localhost:19002'
