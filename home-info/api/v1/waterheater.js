@@ -9,13 +9,12 @@ export default () => {
 	router.route('/')
 		.get((req, res) => {
 			const params = {
-				type: 'device',
+				type: 'devices',
 				rid: idx.waterheater
 			};
 
 			axios.get('/json.htm', { params })
 				.then((response) => {
-					console.log('ressssssss', response)
 					res.send({
 						code: 200,
 						response: response.data
