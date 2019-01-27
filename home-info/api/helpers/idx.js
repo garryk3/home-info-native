@@ -2,6 +2,7 @@ export default {
 	waterheater: 16, // водонагреватель
 	light: {
 		room: 20,
-		hall: 21
+		hall: 21,
+		kitchen: 45
 	}
 }

@@ -28,7 +28,7 @@ export default () => {
 				})
 		});
 
-	router.route('/:idx')
+	router.route('/toggle/:idx')
 		.post((req, res) => {
 			const idx = req.params.idx;
 
@@ -43,7 +43,6 @@ export default () => {
 
 			Promise.all(lightDeviceSwitchRequests)
 				.then((info) => {
-					console.log('infog', info)
 					res.send({
 						code: 200,
 						info

@@ -59,19 +59,15 @@ const toggleDeviceStatus = (req, res, idx, noResponse) => {
 	return axios.get('/json.htm', { params })
 		.then((response) => {
 			if(!noResponse) {
-				console.log('1!!!!!!!!!!!', response.data, noResponse)
-
 				res.send({
 					code: 200,
 					response: response.data
 				})
 			} else {
-				console.log('!!!!!!', response.data)
 				return response.data
 			}
 		})
 		.catch((error) => {
-			console.log('!!!!!!!error', error)
 			makeError(res, error)
 		})
 };
