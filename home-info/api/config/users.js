@@ -1,5 +1,3 @@
 export default {
-	users: {
-		'admin': 'admin'
-	}
+	'admin': 'admin'
 }
