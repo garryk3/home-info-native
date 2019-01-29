@@ -1,10 +1,12 @@
 import express from 'express';
 import axios from '../config/axios-server';
 
+import makeError from './../error';
+
 const router = express.Router();
 
 const admin = {
-	user: 'test',
+	name: 'test',
 	password: 'test'
 };
 
@@ -39,20 +41,16 @@ export default () => {
 								})
 							}
 						} else {
-							res.send({
-								code: 500,
+							makeError(res, {
 								message: `Авторизация не удалась, ошибка сервера, статус: ${response.status}`
 							})
 						}
 					})
 					.catch((error) => {
-						res.send({
-							code: 500,
-							message: `Ошибка обработки запроса: ${error.message}`
-						});
-						console.error(error);
+						makeError(res, error)
 					})
 			} else {
+				res.setHeader('WWW-Authenticate', 'Basic');
 				res.send({
 					code: 401,
 					message: `Авторизация не удалась, некорректные данные пользователя`
