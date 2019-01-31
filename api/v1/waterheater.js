@@ -1,7 +1,7 @@
 import express from 'express';
 
 import idx from '../helpers/idx';
-import { getDeviceStatus, toggleDeviceStatus } from './../helpers/deviceRequests';
+import { getDeviceStatus, toggleDeviceStatus } from '../helpers/deviceRequests';
 
 const router = express.Router();
 
