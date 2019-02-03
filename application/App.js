@@ -2,20 +2,41 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, AsyncStorage } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
+
 import Auth from './components/Auth';
 
-import transport from './config/axios-client';
+import {TransportContext} from './context/transport';
+
+import Transport from './transport';
 
 export default class App extends React.Component {
+  constructor() {
+    super(...arguments);
+
+    this.transport = new Transport();
+
+    this.domoticzInfo = null;
+  }
+
   state = {
     isLoadingComplete: false,
-    isAuth: false
+    isAuth: false,
+    isCheckSavedUser: false
   };
+
+  async componentDidMount() {
+    const user = await AsyncStorage.getItem('user')
+
+    if(user) {
+      this._onAuth(user)
+    } else {
+      console.warn('no user')
+    }
+    this.setState({isCheckSavedUser: true})
+  }
 
   _onAuth = async (params) => {
     await this._saveStorageUserData(params);
-
-    this._setTransportAuthConfig(params);
 
     await this._loadDomoticzInfo();
 
@@ -24,26 +45,15 @@ export default class App extends React.Component {
     });
   };
 
-  _setTransportAuthConfig = (params) => {
-    transport.defaults.auth = {
-      username: params.name,
-      password: params.password
-    };
-  };
-
   _saveStorageUserData = (data) => {
     try {
-      AsyncStorage.setItem('user', data)
+      return AsyncStorage.setItem('user', JSON.stringify(data))
     } catch (err) {
       console.error(err);
     }
   };
 
   _loadResourcesAsync = async () => {
-    // transport.get('http://localhost:9000/api/v1/system/getVersion').then((res) => {
-    //   console.log('response', res)
-    // }).catch(console.error)
-
     return Promise.all([
       Asset.loadAsync([
         require('./assets/images/robot-dev.png'),
@@ -60,14 +70,12 @@ export default class App extends React.Component {
   };
 
   _loadDomoticzInfo = () => {
-    return transport.get('/system/getVersion').then((res) => {
-      console.log('response', res)
+    return this.transport.request('get', '/system/getVersion').then((res) => {
+      this.domoticzInfo = res.result && res.result.response
     }).catch(console.error)
   };
 
   _handleLoadingError = error => {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
     console.warn(error);
   };
 
@@ -76,8 +84,8 @@ export default class App extends React.Component {
   };
 
   render() {
-    if (!this.state.isAuth) {
-      return <Auth onAuth={this._onAuth} />
+    if (!this.state.isAuth && this.state.isCheckSavedUser) {
+      return <Auth onAuth={this._onAuth} transport={this.transport} />
     } else if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
           <AppLoading
@@ -88,10 +96,15 @@ export default class App extends React.Component {
       );
     } else {
       return (
-          <View style={styles.container}>
-            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-            <AppNavigator />
-          </View>
+          <TransportContext.Provider value={{
+            transport: this.transport,
+            domoticzInfo: this.domoticzInfo
+          }}>
+            <View style={styles.container}>
+              {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+              <AppNavigator />
+            </View>
+          </TransportContext.Provider>
       );
     }
   }

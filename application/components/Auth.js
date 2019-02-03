@@ -1,20 +1,46 @@
 import React from 'react';
-import {View, StyleSheet, Text, TextInput, Button} from 'react-native';
+import base64 from 'base-64';
+
+import {View, StyleSheet, Text, TextInput, Button, Alert} from 'react-native';
 
 import Colors from './../constants/Colors';
 
 export default class Auth extends React.Component {
+	constructor() {
+		super(...arguments);
+
+		this.transport = this.props.transport;
+	}
 
 	state = {
 		inputName: '',
-		inputPassword: ''
+		inputPassword: '',
+		loading: false
 	};
 
 	onPressLogin = () => {
-		this.props.onAuth({
+		const user = {
 			name: this.state.inputName,
 			password: this.state.inputPassword
-		})
+		};
+
+		this._setTransportAuthConfig(user);
+
+		this.setState({loading: true});
+
+		this.transport.request('get', 'auth').then((res) => {
+			if(!res.error) {
+				this.props.onAuth && this.props.onAuth(user);
+			} else {
+				Alert.alert(`Ошибка ${res.error.code}!`, res.error.message)
+			}
+		}).finally(() => {
+			this.setState({loading: false})
+		});
+	};
+
+	_setTransportAuthConfig = (params) => {
+		this.transport.setHeader("Authorization", `Basic ${base64.encode(`${params.name}:${params.password}`)}`)
 	};
 
 	render() {
@@ -35,7 +61,7 @@ export default class Auth extends React.Component {
 					<Button
 						onPress={this.onPressLogin}
 						title="Авторизоваться"
-						disabled={!this.state.inputPassword || !this.state.inputName}
+						disabled={this.state.loading || !this.state.inputPassword || !this.state.inputName}
 						color={Colors.btnBackground}
 						accessibilityLabel="Learn more about this purple button"
 					/>

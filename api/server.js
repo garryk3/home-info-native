@@ -12,6 +12,11 @@ app.use(cors({ origin: config.siteUrl }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('static'));
+app.use((req, res, next) => {
+	res.append('Access-Control-Allow-Origin', ['*']);
+	res.append('Content-Type', 'application/json');
+	next();
+});
 
 app.use('/api', routes);
 

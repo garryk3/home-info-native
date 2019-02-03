@@ -1,5 +1,5 @@
-import axios from "../config/axios-server";
-import makeError from "../error";
+import axios from "../axios-server";
+import makeError from "./error";
 
 const getDeviceStatus = (req, res, idx, noResponse) => {
 	const params = {

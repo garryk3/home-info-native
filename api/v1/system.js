@@ -1,7 +1,7 @@
 import express from 'express';
-import axios from '../config/axios-server';
+import axios from '../axios-server';
 
-import makeError from '../error';
+import makeError from '../helpers/error';
 
 const router = express.Router();
 

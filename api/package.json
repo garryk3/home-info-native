@@ -1,9 +1,9 @@
 {
   "main": "index.js",
   "scripts": {
-    "prodserver": "node ./api-dist/server.js",
-    "devserver": "nodemon --exec babel-node -- server.js",
-    "buildserver": "rimraf dist && babel-cli app --out-dir dist --copy-files"
+    "start:prod": "node ./api-dist/server.js",
+    "start:dev": "nodemon --exec babel-node -- server.js",
+    "build": "rimraf dist && babel-cli app --out-dir dist --copy-files"
   },
   "babel": {
     "presets": [
