@@ -5,7 +5,7 @@ import AppNavigator from './navigation/AppNavigator';
 
 import Auth from './components/Auth';
 
-import {TransportContext} from './context/transport';
+import {DefaultContext} from './context/default';
 
 import Transport from './transport';
 
@@ -23,6 +23,7 @@ export default class App extends React.Component {
     isAuth: false,
     isCheckSavedUser: false
   };
+
 
   async componentDidMount() {
     const user = await AsyncStorage.getItem('user')
@@ -96,7 +97,7 @@ export default class App extends React.Component {
       );
     } else {
       return (
-          <TransportContext.Provider value={{
+          <DefaultContext.Provider value={{
             transport: this.transport,
             domoticzInfo: this.domoticzInfo
           }}>
@@ -104,7 +105,7 @@ export default class App extends React.Component {
               {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
               <AppNavigator />
             </View>
-          </TransportContext.Provider>
+          </DefaultContext.Provider>
       );
     }
   }
