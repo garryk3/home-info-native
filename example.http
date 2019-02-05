@@ -1,0 +1,7 @@
+GET http://localhost:9000/api/v1/auth
+content-type: application/json
+
+{
+    "name": "admin",
+    "password": "admin"
+}
