@@ -1,6 +1,8 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, AsyncStorage } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
+import base64 from 'base-64';
+
 import AppNavigator from './navigation/AppNavigator';
 
 import Auth from './components/Auth';
@@ -29,7 +31,8 @@ export default class App extends React.Component {
     const user = await AsyncStorage.getItem('user')
 
     if(user) {
-      this._onAuth(user)
+      this._onAuth(user);
+      this._setTransportAuthConfig(user)
     } else {
       console.warn('no user')
     }
@@ -43,6 +46,10 @@ export default class App extends React.Component {
       isAuth: true
     });
   };
+
+  _setTransportAuthConfig = (params) => {
+		this.transport.setHeader("Authorization", `Basic ${base64.encode(`${params.name}:${params.password}`)}`)
+	};
 
   _saveStorageUserData = (data) => {
     try {
