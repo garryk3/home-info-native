@@ -1,3 +1,3 @@
 import React from 'react';
 
-export const DefaultContext = React.createContext({test: 'asdasd'});
+export const DefaultContext = React.createContext();

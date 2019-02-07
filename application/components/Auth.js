@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingTop: 15,
-		backgroundColor: Colors.authBackground,
+		backgroundColor: Colors.authBackground
 	},
 	innerContainer: {
 		width: '80%',

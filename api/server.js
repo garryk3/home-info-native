@@ -17,6 +17,11 @@ app.use((req, res, next) => {
 	res.append('Content-Type', 'application/json');
 	next();
 });
+// @TODO test
+// app.use((req, res, next) => {
+// 	console.log('!!!', req)
+// 	next();
+// });
 
 app.use('/api', routes);
 

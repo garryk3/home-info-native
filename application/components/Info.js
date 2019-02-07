@@ -3,7 +3,34 @@ import { SectionList, Image, StyleSheet, Text, View } from 'react-native';
 import { Constants } from 'expo';
 
 export default class Info extends React.Component {
+	
+	constructor() {
+		super(...arguments);
+		this.transport = this.props.transport;
+	}
+
+	state = {
+		info: null,
+		error: null
+	}
+
+	async componentDidMount() {
+		console.log('did mount', this.transport.headers)
+		await this._loadDomoticzInfo();
+	}
+
+	_loadDomoticzInfo = () => {
+		return this.transport.request('get', '/system/getVersion').then((res) => {
+			if(res.error) {
+				this.setState({ error: res.error })
+			} else {
+				this.setState({ info: res.result })
+			}
+		}).catch(console.error)
+	  };
+
 	render() {
+		console.log('state', this.state)
 		const { manifest } = Constants;
 		const sections = [
 			{ data: [{ value: manifest.sdkVersion }], title: 'sdkVersion' },

@@ -39,8 +39,6 @@ export default class App extends React.Component {
   _onAuth = async (params) => {
     await this._saveStorageUserData(params);
 
-    await this._loadDomoticzInfo();
-
     this.setState({
       isAuth: true
     });
@@ -70,12 +68,6 @@ export default class App extends React.Component {
     ]);
   };
 
-  _loadDomoticzInfo = () => {
-    return this.transport.request('get', '/system/getVersion').then((res) => {
-      this.domoticzInfo = res.result && res.result.response
-    }).catch(console.error)
-  };
-
   _handleLoadingError = error => {
     console.warn(error);
   };
@@ -99,7 +91,6 @@ export default class App extends React.Component {
       return (
           <DefaultContext.Provider value={{
             transport: this.transport,
-            domoticzInfo: this.domoticzInfo
           }}>
             <View style={styles.container}>
               {Platform.OS === 'ios' && <StatusBar barStyle="default" />}

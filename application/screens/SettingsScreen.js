@@ -15,6 +15,10 @@ export default class SettingsScreen extends React.Component {
     console.log('start', this.context)
     /* Go ahead and delete ExpoConfigView and replace it with your
      * content, we just wanted to give you a quick view of your config */
-    return <Info/>
+    return (
+      <DefaultContext.Consumer>
+        {(context) => <Info transport={context.transport}/>}
+      </DefaultContext.Consumer>
+    )
   }
 }

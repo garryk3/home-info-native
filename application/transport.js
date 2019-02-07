@@ -3,7 +3,9 @@ import config from './config/config';
 export default class Transport {
 	constructor() {
 		this.baseURL = `${config.baseURL}/api/v1`;
-		this.headers = new Headers();
+		this.headers = new Headers({
+			"Content-Type": "text/plain",
+		});
 		this.params = {
 			headers: this.headers,
 			mode: 'no-cors',
