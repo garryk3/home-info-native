@@ -7,7 +7,7 @@ import AppNavigator from './navigation/AppNavigator';
 
 import Auth from './components/Auth';
 
-import {DefaultContext} from './context/default';
+import { DefaultContext } from './context/default';
 
 import Transport from './transport';
 
@@ -29,30 +29,30 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     const user = await AsyncStorage.getItem('user')
-
-    if(user) {
-      this._onAuth(user);
-      this._setTransportAuthConfig(user)
-    } else {
-      console.warn('no user')
-    }
+    
+    this._onAuth(JSON.parse(user), true);
     this.setState({isCheckSavedUser: true})
   }
 
-  _onAuth = async (params) => {
-    await this._saveStorageUserData(params);
+  _onAuth = async (user, withoutSaveToStorage) => {
+    try {
+      if(user && user.name && user.password) {
+        !withoutSaveToStorage && await this._saveStorageUserData(user);
+        this.transport.setAuthHeader(user);
 
-    this.setState({
-      isAuth: true
-    });
+        this.setState({
+          isAuth: true
+        });
+      }
+    } catch (err) {
+        console.error(err);
+    }
   };
 
-  _setTransportAuthConfig = (params) => {
-		this.transport.setHeader("Authorization", `Basic ${base64.encode(`${params.name}:${params.password}`)}`)
-	};
-
-  _saveStorageUserData = (data) => {
+  _saveStorageUserData = async (data) => {
     try {
+      await AsyncStorage.removeItem('user');
+
       return AsyncStorage.setItem('user', JSON.stringify(data))
     } catch (err) {
       console.error(err);

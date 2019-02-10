@@ -1,0 +1,2 @@
+POST https://localhost:9000/api/v1/system/getversion HTTP/1.1
+content-type: application/json

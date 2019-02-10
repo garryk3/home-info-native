@@ -1,13 +1,12 @@
 import React from 'react';
-import base64 from 'base-64';
 
 import {View, StyleSheet, Text, TextInput, Button, Alert} from 'react-native';
 
 import Colors from './../constants/Colors';
 
 export default class Auth extends React.Component {
-	constructor() {
-		super(...arguments);
+	constructor(props) {
+		super(props);
 
 		this.transport = this.props.transport;
 	}
@@ -19,12 +18,13 @@ export default class Auth extends React.Component {
 	};
 
 	onPressLogin = () => {
+		console.log('auth transport', this.transport, this.transport.setAuthHeader)
 		const user = {
 			name: this.state.inputName,
 			password: this.state.inputPassword
 		};
 
-		this._setTransportAuthConfig(user);
+		this.transport.setAuthHeader(user);
 
 		this.setState({loading: true});
 
@@ -37,10 +37,6 @@ export default class Auth extends React.Component {
 		}).finally(() => {
 			this.setState({loading: false})
 		});
-	};
-
-	_setTransportAuthConfig = (params) => {
-		this.transport.setHeader("Authorization", `Basic ${base64.encode(`${params.name}:${params.password}`)}`)
 	};
 
 	render() {
