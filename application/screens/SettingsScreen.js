@@ -4,7 +4,7 @@ import {DefaultContext} from "../context/default";
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
-    title: 'Умный дом (Domoticz)'
+    header: null
   };
 
   static contextType = DefaultContext;

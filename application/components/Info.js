@@ -2,6 +2,8 @@ import React from 'react';
 import { SectionList, Image, StyleSheet, Text, View } from 'react-native';
 import { Constants } from 'expo';
 
+import Switcher from './switcher';
+
 export default class Info extends React.Component {
 	
 	constructor() {
@@ -26,7 +28,7 @@ export default class Info extends React.Component {
 				this.setState({ info: res.result.response })
 			}
 		}).catch(console.error)
-	  };
+	};
 
 	get infoData() {
 		let result = [];
@@ -53,12 +55,29 @@ export default class Info extends React.Component {
 		}
 
 		return result;
-	}  
+	}
 
-	render() {
-		console.log('!!!info', this.state.info)
-		const sections = this.infoData
-
+	get _renderWaterHeaterText() {
+		const data = [
+			{
+				data: [{
+					value: '04:30-05:30'
+				},{
+					value: '20:30-22:00'
+				}],
+				title: 'Время работы с понедельника по пятницу:'
+			},
+			{
+				data: [{
+					value: '09:00-11:00'
+				},{
+					value: '15:00-16:30'
+				},{
+					value: '20:00-22:00'
+				}],
+				title: 'Время работы на выходных:'
+			}
+		]
 		return (
 			<SectionList
 				style={styles.container}
@@ -67,8 +86,33 @@ export default class Info extends React.Component {
 				stickySectionHeadersEnabled={true}
 				keyExtractor={(item, index) => index}
 				ListHeaderComponent={ListHeader}
-				sections={sections}
+				sections={data}
 			/>
+		)
+	}
+
+	get _renderWaterHeaterInfo() {
+		return <Switcher
+			btnText='Время работы бойлера'
+			renderContent={this._renderWaterHeaterText}
+		/>
+	}
+
+	render() {
+		return (
+			<React.Fragment>
+				<Text styles={styles.header}>Информация</Text>
+				<SectionList
+					style={styles.container}
+					renderItem={this._renderItem}
+					renderSectionHeader={this._renderSectionHeader}
+					stickySectionHeadersEnabled={true}
+					keyExtractor={(item, index) => index}
+					ListHeaderComponent={ListHeader}
+					sections={this.infoData}
+				/>
+				{this._renderWaterHeaterInfo}
+			</React.Fragment>
 		);
 	}
 
@@ -155,6 +199,15 @@ const Color = ({ value }) => {
 };
 
 const styles = StyleSheet.create({
+	wrapper: {
+		paddingTop: 18
+	},
+	header: {
+		marginTop: 18,
+		fontWeight: '700',
+		fontSize: 24,
+		textAlign: 'center'
+	},
 	container: {
 		flex: 1,
 		backgroundColor: '#fff',
