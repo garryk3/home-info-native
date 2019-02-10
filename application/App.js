@@ -30,7 +30,11 @@ export default class App extends React.Component {
   async componentDidMount() {
     const user = await AsyncStorage.getItem('user')
     
-    this._onAuth(JSON.parse(user), true);
+    try {
+      this._onAuth(JSON.parse(user), true);
+    } catch (err) {
+      console.error(err)
+    }
     this.setState({isCheckSavedUser: true})
   }
 

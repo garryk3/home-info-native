@@ -15,7 +15,6 @@ export default class Info extends React.Component {
 	}
 
 	async componentDidMount() {
-		console.log('did mount', this.transport.headers)
 		await this._loadDomoticzInfo();
 	}
 
@@ -24,54 +23,41 @@ export default class Info extends React.Component {
 			if(res.error) {
 				this.setState({ error: res.error })
 			} else {
-				this.setState({ info: res.result })
+				this.setState({ info: res.result.response })
 			}
 		}).catch(console.error)
 	  };
 
+	get infoData() {
+		let result = [];
+
+		if(this.state.info) {
+			const { HaveUpdate, Revision, build_time, status, version } = this.state.info;
+			const info = {
+				status,
+				version,
+				haveUpdate: HaveUpdate,
+				revision: Revision,
+				buildTime: build_time
+			};
+			const infoArray = Object.entries(info);
+
+			if(infoArray.length) {
+				result = infoArray.map((item) => ({
+					data: [{
+						value: item[1] + ''
+					}],
+					title: item[0]
+				}))
+			}
+		}
+
+		return result;
+	}  
+
 	render() {
-		console.log('state', this.state)
-		const { manifest } = Constants;
-		const sections = [
-			{ data: [{ value: manifest.sdkVersion }], title: 'sdkVersion' },
-			{ data: [{ value: manifest.privacy }], title: 'privacy' },
-			{ data: [{ value: manifest.version }], title: 'version' },
-			{ data: [{ value: manifest.orientation }], title: 'orientation' },
-			{
-				data: [{ value: manifest.primaryColor, type: 'color' }],
-				title: 'primaryColor',
-			},
-			{
-				data: [{ value: manifest.splash && manifest.splash.image }],
-				title: 'splash.image',
-			},
-			{
-				data: [
-					{
-						value: manifest.splash && manifest.splash.backgroundColor,
-						type: 'color',
-					},
-				],
-				title: 'splash.backgroundColor',
-			},
-			{
-				data: [
-					{
-						value: manifest.splash && manifest.splash.resizeMode,
-					},
-				],
-				title: 'splash.resizeMode',
-			},
-			{
-				data: [
-					{
-						value:
-							manifest.ios && manifest.ios.supportsTablet ? 'true' : 'false',
-					},
-				],
-				title: 'ios.supportsTablet',
-			},
-		];
+		console.log('!!!info', this.state.info)
+		const sections = this.infoData
 
 		return (
 			<SectionList
@@ -110,25 +96,23 @@ export default class Info extends React.Component {
 }
 
 const ListHeader = () => {
-	const { manifest } = Constants;
-
 	return (
 		<View style={styles.titleContainer}>
 			<View style={styles.titleIconContainer}>
-				<AppIconPreview iconUrl={manifest.iconUrl} />
+				<Image
+					source={require('./../assets/images/domoticz.png')}
+					style={{ width: 64, height: 64 }}
+					resizeMode="cover"
+				/>
 			</View>
 
 			<View style={styles.titleTextContainer}>
 				<Text style={styles.nameText} numberOfLines={1}>
-					{manifest.name}
+					Domoticz
 				</Text>
 
 				<Text style={styles.slugText} numberOfLines={1}>
-					{manifest.slug}
-				</Text>
-
-				<Text style={styles.descriptionText}>
-					{manifest.description}
+					Система умного дома
 				</Text>
 			</View>
 		</View>
@@ -150,21 +134,6 @@ const SectionContent = props => {
 		<View style={styles.sectionContentContainer}>
 			{props.children}
 		</View>
-	);
-};
-
-const AppIconPreview = ({ iconUrl }) => {
-	if (!iconUrl) {
-		iconUrl =
-			'https://s3.amazonaws.com/exp-brand-assets/ExponentEmptyManifest_192.png';
-	}
-
-	return (
-		<Image
-			source={{ uri: iconUrl }}
-			style={{ width: 64, height: 64 }}
-			resizeMode="cover"
-		/>
 	);
 };
 

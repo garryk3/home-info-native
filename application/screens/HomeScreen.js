@@ -13,10 +13,6 @@ import { WebBrowser } from 'expo';
 import { MonoText } from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Умный дом (Domoticz)'
-  };
-
   render() {
     return (
       <View style={styles.container}>
