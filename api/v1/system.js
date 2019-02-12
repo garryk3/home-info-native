@@ -39,7 +39,7 @@ export default () => {
 
 			 LASTLOGTIME  starting with logmessages in LASTLOGTIME seconds since last epoch ( 0 = all available)
 			 */
-			const type = req.body.params && req.body.params.type || 4;
+			const type = req.body.params && req.body.params.type || 268435455;
 			const logtime = 0;
 			/**
 			 *
@@ -48,12 +48,13 @@ export default () => {
 			const params = {
 				type: 'command',
 				param: 'getlog',
-				laslogtime: logtime,
+				lastlogtime: logtime,
 				loglevel: type
 			};
 
 			axios.get('/json.htm', { params })
 				.then((response) => {
+					console.log('@res', response)
 					res.send({
 						code: 200,
 						response: response.data

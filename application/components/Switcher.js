@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, View, Button } from 'react-native';
 
-import Colors from './../constants/Colors';
+import Colors from '../constants/Colors';
 
 export default class Switcher extends React.Component {
 
@@ -10,17 +10,17 @@ export default class Switcher extends React.Component {
     }
 
     onPressBtn = () => {
-        console.log('press', this.state.show)
+        if(this.props.onPress && !this.state.show) {
+            this.props.onPress()
+        }
         this.setState({ show: !this.state.show })
     }
 
     get renderContent() {
         if(this.state.show) {
-            console.log('render', this.props.renderContent)
             return (
                 <View styles={styles.container}>
                     {this.props.renderContent}
-                    <Text>test</Text>
                 </View>
             )
         }
@@ -28,7 +28,7 @@ export default class Switcher extends React.Component {
 
     render() {
         return (
-            <React.Fragment>
+            <View styles={styles.wrapper}>
                 <Button
                     onPress={this.onPressBtn}
                     styles={styles.button}
@@ -36,7 +36,7 @@ export default class Switcher extends React.Component {
                     color={Colors.btnBackground}
                 />
                 {this.renderContent}
-            </React.Fragment>
+            </View>
         )
     }
 }
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 8,
     },
-    button: {
+    wrapper: {
         marginBottom: 18,
         marginTop: 10,
     }

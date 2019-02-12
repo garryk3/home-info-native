@@ -21,7 +21,6 @@ export default class Transport {
 	}
 
 	setAuthHeader(user) {
-		console.log('setAuthHeader', user)
 		this.setHeader("Authorization", `Basic ${base64.encode(`${user.name}:${user.password}`)}`)
 	}
 
@@ -30,7 +29,6 @@ export default class Transport {
 		const requestURL = url.startsWith('http') ? url : `${this.baseURL}/${url}`;
 
 		config.method = method.toUpperCase();
-		console.log('request', url, config)
 
 		try {
 			const res = await fetch(requestURL, config);

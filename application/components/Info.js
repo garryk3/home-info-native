@@ -1,8 +1,8 @@
 import React from 'react';
-import { SectionList, Image, StyleSheet, Text, View } from 'react-native';
+import { SectionList, Image, StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
 import { Constants } from 'expo';
 
-import Switcher from './switcher';
+import Switcher from './Switcher';
 
 export default class Info extends React.Component {
 	
@@ -13,12 +13,15 @@ export default class Info extends React.Component {
 
 	state = {
 		info: null,
-		error: null
+		error: null,
+		logContent: null,
+		waterHeaterContent: null
 	}
 
 	async componentDidMount() {
 		await this._loadDomoticzInfo();
 	}
+
 
 	_loadDomoticzInfo = () => {
 		return this.transport.request('get', '/system/getVersion').then((res) => {
@@ -28,6 +31,33 @@ export default class Info extends React.Component {
 				this.setState({ info: res.result.response })
 			}
 		}).catch(console.error)
+	};
+
+	_onPressLogBtn = () => {
+		return this.transport.request('post', '/system/getlog').then((res) => {
+			if(res.error) {
+				this.setState({ error: res.error })
+			} else {
+				let content = [{message: 'Нет результатов!'}]
+
+				if(res.result.response && res.result.response.result) {
+					content = res.result.response.result;
+				}
+				this.setState({ logContent: content })
+			}
+		}).catch(console.error)
+	};
+
+	_onPressWaterHeaterBtn = () => {
+		if(!this.state.waterHeaterContent) {
+			return this.transport.request('get', '/content/getWaterHeaterInfo').then((res) => {
+				if(res.error) {
+					this.setState({ error: res.error })
+				} else {
+					this.setState({ waterHeaterContent: res.result.response })
+				}
+			}).catch(console.error)
+		}
 	};
 
 	get infoData() {
@@ -57,51 +87,58 @@ export default class Info extends React.Component {
 		return result;
 	}
 
-	get _renderWaterHeaterText() {
-		const data = [
-			{
-				data: [{
-					value: '04:30-05:30'
-				},{
-					value: '20:30-22:00'
-				}],
-				title: 'Время работы с понедельника по пятницу:'
-			},
-			{
-				data: [{
-					value: '09:00-11:00'
-				},{
-					value: '15:00-16:30'
-				},{
-					value: '20:00-22:00'
-				}],
-				title: 'Время работы на выходных:'
-			}
-		]
-		return (
-			<SectionList
-				style={styles.container}
-				renderItem={this._renderItem}
-				renderSectionHeader={this._renderSectionHeader}
-				stickySectionHeadersEnabled={true}
-				keyExtractor={(item, index) => index}
-				ListHeaderComponent={ListHeader}
-				sections={data}
-			/>
-		)
+	get _renderWaterHeaterContent() {
+		if(this.state.waterHeaterContent) {
+			return (
+				<FlatList
+					data={this.state.waterHeaterContent}
+					keyExtractor={(item, index) => `$key-${index}`}
+					renderItem={({item, index}) => (
+						<View key={index}>
+							<Text>{item.title}</Text>
+							{Array.isArray(item.data) && item.data.map((subitem, index) => (
+								<Text key={`value-${index}`}>{subitem.value}</Text>
+							))}
+						</View>
+					)}
+				/>
+			)
+		}
 	}
 
 	get _renderWaterHeaterInfo() {
 		return <Switcher
 			btnText='Время работы бойлера'
-			renderContent={this._renderWaterHeaterText}
+			renderContent={this._renderWaterHeaterContent}
+			onPress={this._onPressWaterHeaterBtn}
+		/>
+	}
+
+	get _renderLogContent() {
+		if(this.state.logContent) {
+			return (
+				<ScrollView style={styles.logWrapper}>
+					{this.state.logContent.map((item, index) => (
+						<Text key={`log-${index}`}>
+							{item.level && `Level ${item.level}: `}{item.message}
+						</Text>
+					))}
+				</ScrollView>
+			)
+		}
+	}
+
+	get _renderLogInfo() {
+		return <Switcher 
+			btnText='Журнал системы'
+			renderContent={this._renderLogContent}
+			onPress={this._onPressLogBtn}
 		/>
 	}
 
 	render() {
 		return (
 			<React.Fragment>
-				<Text styles={styles.header}>Информация</Text>
 				<SectionList
 					style={styles.container}
 					renderItem={this._renderItem}
@@ -112,6 +149,7 @@ export default class Info extends React.Component {
 					sections={this.infoData}
 				/>
 				{this._renderWaterHeaterInfo}
+				{this._renderLogInfo}
 			</React.Fragment>
 		);
 	}
@@ -270,4 +308,7 @@ const styles = StyleSheet.create({
 	colorTextContainer: {
 		flex: 1,
 	},
+	logWrapper: {
+		height: 500
+	}
 });

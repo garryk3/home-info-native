@@ -18,10 +18,10 @@ app.use((req, res, next) => {
 	next();
 });
 //@TODO test
-app.use((req, res, next) => {
-	console.log('!!!', req.rawHeaders)
-	next();
-});
+// app.use((req, res, next) => {
+// 	console.log('!!!', req.rawHeaders)
+// 	next();
+// });
 
 app.use('/api', routes);
 

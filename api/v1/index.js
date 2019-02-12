@@ -4,6 +4,7 @@ import WaterHeater from './waterheater';
 import System from './system';
 import Light from './light';
 import Auth from './auth';
+import Content from './content';
 import basicAuth from "express-basic-auth";
 import users from "../config/users";
 
@@ -20,5 +21,6 @@ router.use('/waterheater',checkAuth, WaterHeater());
 router.use('/system',checkAuth, System());
 router.use('/light',checkAuth, Light());
 router.use('/auth',checkAuth, Auth());
+router.use('/content',checkAuth, Content());
 
 export default router

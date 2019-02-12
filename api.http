@@ -1,2 +1,17 @@
-POST https://localhost:9000/api/v1/system/getversion HTTP/1.1
+GET http://localhost:9000/api/v1/content/getWaterHeaterInfo HTTP/1.1
 content-type: application/json
+authorization: Basic YWRtaW46YWRtaW4=
+
+
+
+
+# POST http://192.168.1.65:8080/json.htm HTTP/1.1
+# content-type: application/json
+# authorization: Basic Z2FycnlrMzpnYWdhcmExOTgy
+
+# {
+#     "type": "command",
+#     "param": "getlog",
+#     "laslogtime": "0",
+#     "loglevel": "4"
+# }
