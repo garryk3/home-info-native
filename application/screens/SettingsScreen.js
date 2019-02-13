@@ -12,7 +12,6 @@ export default class SettingsScreen extends React.Component {
   startInfoData = this.context.domoticzInfo
 
   render() {
-    console.log('start', this.context)
     /* Go ahead and delete ExpoConfigView and replace it with your
      * content, we just wanted to give you a quick view of your config */
     return (

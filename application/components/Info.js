@@ -1,5 +1,5 @@
 import React from 'react';
-import { SectionList, Image, StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
+import { SectionList, Image, StyleSheet, Text, View, ScrollView, FlatList, Button, Alert } from 'react-native';
 import { Constants } from 'expo';
 
 import Switcher from './Switcher';
@@ -9,27 +9,42 @@ export default class Info extends React.Component {
 	constructor() {
 		super(...arguments);
 		this.transport = this.props.transport;
+		this.timer = null;
 	}
 
 	state = {
 		info: null,
 		error: null,
 		logContent: null,
-		waterHeaterContent: null
+		waterHeaterContent: null,
+		systemReboot: false
 	}
 
 	async componentDidMount() {
 		await this._loadDomoticzInfo();
 	}
 
+	componentWillUnmount() {
+		if(this.timer) {
+			clearInterval(this.timer)
+		}
+	}
+
 
 	_loadDomoticzInfo = () => {
 		return this.transport.request('get', '/system/getVersion').then((res) => {
+			const newState = {};
+
 			if(res.error) {
-				this.setState({ error: res.error })
+				newState.error = res.error;
 			} else {
-				this.setState({ info: res.result.response })
+				newState.info = res.result.response;
+
+				if(this.state.systemReboot) {
+					newState.systemReboot = false;
+				}
 			}
+			this.setState(newState)
 		}).catch(console.error)
 	};
 
@@ -59,6 +74,41 @@ export default class Info extends React.Component {
 			}).catch(console.error)
 		}
 	};
+
+	_watchWhenSystemWillActive = () => {
+		this.timer && clearInterval(this.timer);
+
+		this.timer = setInterval(() => {
+			if(this.state.systemReboot) {
+				this._loadDomoticzInfo();
+			} else {
+				clearInterval(this.timer);
+			}
+		}, 20000)
+	}
+
+	_rebootSystem = () => {
+		return this.transport.request('get', '/system/reboot').then((res) => {
+			this.setState({ systemReboot: true }) // При отправке команды ребут, запрос к Домотикзу отвалится по таймауту, но перезагрузка стартанет
+			this._watchWhenSystemWillActive()
+		}).catch(console.error)
+	}
+
+	_onPressReloadBtn = () => {
+		Alert.alert(
+			'Перезагрузка системы',
+			'Вы уверены, что необходимо перезагрузить систему?',
+			[
+			  {text: 'Да',
+			   onPress: this._rebootSystem},
+			  {
+				text: 'Нет',
+				style: 'cancel',
+			  },
+			],
+			{cancelable: false},
+		  );
+	}
 
 	get infoData() {
 		let result = [];
@@ -136,6 +186,23 @@ export default class Info extends React.Component {
 		/>
 	}
 
+	get _renderRebootBtn() {
+		return <Button
+			title='Перезагрузить систему'
+			onPress={this._onPressReloadBtn}
+		/>
+	}
+
+	get _renderRebootInfo() {
+		if(this.state.systemReboot) {
+			return (
+				<View style={styles.infoContainer}>
+					<Text>Система перезагружается. Это может занять около минуты!</Text>
+				</View>
+			)
+		}
+	}
+
 	render() {
 		return (
 			<React.Fragment>
@@ -150,6 +217,8 @@ export default class Info extends React.Component {
 				/>
 				{this._renderWaterHeaterInfo}
 				{this._renderLogInfo}
+				{this._renderRebootBtn}
+				{this._renderRebootInfo}
 			</React.Fragment>
 		);
 	}
@@ -310,5 +379,19 @@ const styles = StyleSheet.create({
 	},
 	logWrapper: {
 		height: 500
+	},
+	infoContainer: {
+		zIndex: 10,
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontSize: 24,
+		color: '#fff',
+		backgroundColor: 'rgba(0,0,0,0.5)'
 	}
 });

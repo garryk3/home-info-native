@@ -6,11 +6,6 @@ import makeError from '../helpers/error';
 const router = express.Router();
 
 export default () => {
-	router.route('/')
-		.get((req, res) => {
-			res.send('success')
-		});
-
 	router.route('/getversion')
 		.get((req, res) => {
 			const params = {
@@ -53,15 +48,13 @@ export default () => {
 			};
 
 			axios.get('/json.htm', { params })
-				.then((response) => {
-					console.log('@res', response)
-					res.send({
-						code: 200,
-						response: response.data
-					})
-				})
 				.catch((error) => {
 					makeError(res, error);
+				}).finally(() => {
+					res.send({
+						code: 200,
+						response: 'Ok'
+					})
 				})
 		});
 
@@ -72,7 +65,9 @@ export default () => {
 				param: 'system_reboot'
 			};
 
-			axios.get('/json.htm', { params });
+			axios.get('/json.htm', { params }).catch((error) => {
+				console.error('reboot system error: ', error);
+			});
 			res.send({
 				code: 200,
 				message: 'success'
