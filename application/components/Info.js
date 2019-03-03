@@ -1,10 +1,9 @@
 import React from 'react';
 import { SectionList, Image, StyleSheet, Text, View, ScrollView, FlatList, Button, Alert } from 'react-native';
-import { Constants } from 'expo';
 
 import Switcher from './Switcher';
 
-export default class Info extends React.Component {
+class Info extends React.Component {
 	
 	constructor() {
 		super(...arguments);
@@ -157,11 +156,13 @@ export default class Info extends React.Component {
 	}
 
 	get _renderWaterHeaterInfo() {
-		return <Switcher
-			btnText='Время работы бойлера'
-			renderContent={this._renderWaterHeaterContent}
-			onPress={this._onPressWaterHeaterBtn}
+		return (
+			<Switcher
+				btnText='Время работы бойлера'
+				renderContent={this._renderWaterHeaterContent}
+				onPress={this._onPressWaterHeaterBtn}
 		/>
+		)
 	}
 
 	get _renderLogContent() {
@@ -179,18 +180,22 @@ export default class Info extends React.Component {
 	}
 
 	get _renderLogInfo() {
-		return <Switcher 
-			btnText='Журнал системы'
-			renderContent={this._renderLogContent}
-			onPress={this._onPressLogBtn}
-		/>
+		return (
+			<Switcher 
+				btnText='Журнал системы'
+				renderContent={this._renderLogContent}
+				onPress={this._onPressLogBtn}
+			/>
+		)
 	}
 
 	get _renderRebootBtn() {
-		return <Button
-			title='Перезагрузить систему'
-			onPress={this._onPressReloadBtn}
+		return (
+			<Button
+				title='Перезагрузить систему'
+				onPress={this._onPressReloadBtn}
 		/>
+		)
 	}
 
 	get _renderRebootInfo() {
@@ -205,7 +210,7 @@ export default class Info extends React.Component {
 
 	render() {
 		return (
-			<React.Fragment>
+			<ScrollView>
 				<SectionList
 					style={styles.container}
 					renderItem={this._renderItem}
@@ -215,11 +220,27 @@ export default class Info extends React.Component {
 					ListHeaderComponent={ListHeader}
 					sections={this.infoData}
 				/>
-				{this._renderWaterHeaterInfo}
-				{this._renderLogInfo}
-				{this._renderRebootBtn}
-				{this._renderRebootInfo}
-			</React.Fragment>
+				<View
+					style={styles.button}
+				>
+					{this._renderWaterHeaterInfo}
+				</View>
+				<View
+					style={styles.button}
+				>
+					{this._renderLogInfo}
+				</View>
+				<View
+					style={styles.button}
+				>
+					{this._renderRebootBtn}
+				</View>
+				<View
+					style={styles.button}
+				>
+					{this._renderRebootInfo}
+				</View>	
+			</ScrollView>
 		);
 	}
 
@@ -306,6 +327,9 @@ const Color = ({ value }) => {
 };
 
 const styles = StyleSheet.create({
+	button: {
+		marginBottom: 18
+	},
 	wrapper: {
 		paddingTop: 18
 	},
@@ -378,7 +402,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	logWrapper: {
-		height: 500
+		maxHeight: 500
 	},
 	infoContainer: {
 		zIndex: 10,
@@ -395,3 +419,5 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(0,0,0,0.5)'
 	}
 });
+
+export default Info;

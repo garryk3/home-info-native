@@ -1,3 +1,3 @@
 module.export = {
-    "extends": "google"
+    "extends": "airbnb"
 };

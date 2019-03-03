@@ -1,6 +1,6 @@
 import React from 'react';
 import Info from './../components/Info';
-import {DefaultContext} from "../context/default";
+import { DefaultContext } from "../context/default";
 
 export default class SettingsScreen extends React.Component {
   static navigationOptions = {
@@ -12,8 +12,6 @@ export default class SettingsScreen extends React.Component {
   startInfoData = this.context.domoticzInfo
 
   render() {
-    /* Go ahead and delete ExpoConfigView and replace it with your
-     * content, we just wanted to give you a quick view of your config */
     return (
       <DefaultContext.Consumer>
         {(context) => <Info transport={context.transport}/>}
